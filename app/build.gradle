@@ -27,6 +27,7 @@ android {
 }
 
 dependencies {
+    implementation project(':instagram')
     implementation project(':login')
     implementation project(':core')
 }
