@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.jakewharton.butterknife'
 
 android {
@@ -28,4 +29,5 @@ android {
 
 dependencies {
     implementation project(':core')
+    kapt 'com.jakewharton:butterknife-compiler:10.0.0'
 }
