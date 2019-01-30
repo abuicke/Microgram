@@ -1,6 +1,7 @@
 package ie.gravitycode.microgram
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import ie.gravitycode.instagram.api.InstagramApi
 import ie.gravitycode.instagram.reponse.userinfo.UserInfo
@@ -12,6 +13,10 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
+
+    private companion object {
+        val TAG = MainActivity::class.java.simpleName
+    }
 
     private val activityComponent = DaggerActivityComponent
         .builder()
@@ -26,38 +31,24 @@ class MainActivity : AppCompatActivity() {
         activityComponent.inject(this)
 
         val loginMvcView = mvcViewFactory.getLoginMvcView(null)
+        val userProfileMvcView = mvcViewFactory.getUserProfileMvcView(null)
         loginMvcView.subscribeLoginComplete()
-            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
+            .switchMap { accessToken -> instagramApi.getUserInfo(accessToken) }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<String>() {
+            .subscribe(object : DisposableObserver<UserInfo>() {
                 override fun onComplete() {
 
                 }
 
-                override fun onNext(authToken: String) {
-                    instagramApi.getUserInfo(authToken)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : DisposableObserver<UserInfo>() {
-                            override fun onComplete() {
-
-                            }
-
-                            override fun onNext(userInfo: UserInfo) {
-                                val userProfileMvcView =
-                                    mvcViewFactory.getUserProfileMvcView(null)
-                                userProfileMvcView.setUsername(userInfo.data.username)
-                                setContentView(userProfileMvcView.getRootView())
-                            }
-
-                            override fun onError(e: Throwable) {
-
-                            }
-                        })
+                override fun onNext(userInfo: UserInfo) {
+                    userProfileMvcView.setUsername(userInfo.data.username)
+                    setContentView(userProfileMvcView.getRootView())
                 }
 
                 override fun onError(e: Throwable) {
-
+                    Log.e(TAG, "login failed", e)
+                    loginMvcView.showLoginFailedMessage()
                 }
             })
 

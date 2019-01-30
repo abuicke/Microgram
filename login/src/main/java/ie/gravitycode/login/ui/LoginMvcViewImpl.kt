@@ -10,13 +10,18 @@ import android.widget.Button
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import ie.gravitycode.core.util.ToastManager
 import ie.gravitycode.login.R
 import ie.gravitycode.login.R2
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.net.URI
 
-class LoginMvcViewImpl(inflater: LayoutInflater, parent: ViewGroup?) : LoginMvcView {
+class LoginMvcViewImpl(
+    inflater: LayoutInflater,
+    private val toastManager: ToastManager,
+    parent: ViewGroup?
+) : LoginMvcView {
 
     private val loginCompleteSubject: Subject<String> = PublishSubject.create()
 
@@ -31,6 +36,8 @@ class LoginMvcViewImpl(inflater: LayoutInflater, parent: ViewGroup?) : LoginMvcV
     override fun getRootView() = rootView
 
     override fun subscribeLoginComplete() = loginCompleteSubject
+
+    override fun showLoginFailedMessage() = toastManager.toastLong("Login failed")
 
     @OnClick(R2.id.login_button)
     internal fun login() = showWebView()

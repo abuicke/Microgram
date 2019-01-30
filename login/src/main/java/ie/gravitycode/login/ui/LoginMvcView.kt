@@ -7,4 +7,6 @@ interface LoginMvcView: MvcView {
 
     fun subscribeLoginComplete(): Observable<String>
 
+    fun showLoginFailedMessage()
+
 }
