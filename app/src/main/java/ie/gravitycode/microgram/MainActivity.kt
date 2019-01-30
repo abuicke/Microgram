@@ -12,6 +12,7 @@ import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+
 class MainActivity : AppCompatActivity() {
 
     @Inject internal lateinit var instagramApi: InstagramApi
@@ -46,6 +47,35 @@ class MainActivity : AppCompatActivity() {
 
         val loginMvcView = LoginMvcViewImpl(this, null)
         setContentView(loginMvcView.getRootView())
+
+//        webView.settings.javaScriptEnabled = true
+//        webView.settings.loadWithOverviewMode = true
+//        webView.settings.useWideViewPort = true
+//        webView.webViewClient = object : WebViewClient() {
+//
+//            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+//                if(url.contains("#access_token")) {
+//                    Log.e("mo", "fragment = ${URI(url).fragment}")
+//                    view.visibility = View.GONE
+//                }else {
+//                    view.loadUrl(url)
+//                }
+//
+//                return true
+//            }
+//
+//            override fun onPageFinished(view: WebView, url: String) {
+//
+//            }
+//        }
+//
+//        webView.loadUrl(
+//            "https://www.instagram.com/oauth/authorize/?" +
+//                    "client_id=5f2c2dbc8809457faaddd7c3834ff8ba&" +
+//                    "redirect_uri=https://google.com&" +
+//                    "response_type=token&" +
+//                    "scope=public_content"
+//        )
     }
 
 }
