@@ -44,8 +44,9 @@ class LoginMvcViewImpl(inflater: LayoutInflater, parent: ViewGroup?) : LoginMvcV
 
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 if (url.contains("#access_token")) {
-                    val authToken = URI(url).fragment
-                    loginCompleteSubject.onNext(authToken)
+                    val accessTokenFragment = URI(url).fragment
+                    val accessToken = accessTokenFragment.removePrefix("access_token=")
+                    loginCompleteSubject.onNext(accessToken)
                     view.visibility = View.GONE
                 } else {
                     view.loadUrl(url)
