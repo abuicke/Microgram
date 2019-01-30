@@ -5,8 +5,8 @@ import ie.gravitycode.microgram.MainActivity
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, NetworkingModule::class])
-interface AppComponent {
+@Component(modules = [MvcViewModule::class, NetworkingModule::class])
+interface ActivityComponent {
 
     fun inject(activity: MainActivity)
 

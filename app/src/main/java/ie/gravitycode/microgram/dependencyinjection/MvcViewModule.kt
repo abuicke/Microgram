@@ -9,7 +9,7 @@ import ie.gravitycode.microgram.MvcViewFactoryImpl
 import javax.inject.Singleton
 
 @Module
-class AppModule(private val context: Context) {
+class MvcViewModule(private val context: Context) {
 
     @Provides @Singleton fun providesContext() = context
 
