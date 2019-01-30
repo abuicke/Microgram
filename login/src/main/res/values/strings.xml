@@ -3,5 +3,5 @@
     <string name="microgram">Microgram</string>
     <string name="login_username_hint">Phone number, email address or username</string>
     <string name="password_hint">Password</string>
-    <string name="log_in_button_text">Log In</string>
+    <string name="log_in_button_text">Log in with Instagram</string>
 </resources>
