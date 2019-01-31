@@ -1,10 +1,10 @@
 package ie.gravitycode.microgram
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
@@ -19,10 +19,8 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private val instagramOAuthMvcView by lazy { mvcViewFactory.getInstagramOAuthMvcView(null) }
     private val userProfileMvcView by lazy { mvcViewFactory.getUserProfileMvcView(null) }
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent.inject(this)
@@ -57,22 +56,28 @@ class MainActivity : AppCompatActivity() {
                     })
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : DisposableObserver<Pair<UserInfo, UserProfile>>() {
-                override fun onComplete() {
-                    dispose()
-                }
-
-                override fun onNext(userInfoAndProfile: Pair<UserInfo, UserProfile>) {
+            .subscribe(
+                { userInfoAndProfile ->
                     showUserProfile(userInfoAndProfile.first, userInfoAndProfile.second)
-                    dispose()
-                }
-
-                override fun onError(e: Throwable) {
+                },
+                { e ->
                     Log.e(TAG, "login failed", e)
                     loginMvcView.showLoginFailedMessage()
-                    dispose()
-                }
-            })
+                })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_sign_out -> {
+                signOut()
+            }
+        }
+        return true
     }
 
     private fun authenticate(): Observable<Authentication> {
@@ -89,8 +94,8 @@ class MainActivity : AppCompatActivity() {
                     instagramOAuthMvcView.startSignIn()
                 })
             .observeOn(Schedulers.io())
-            .firstElement()
-            .toObservable()
+//            .firstElement()
+//            .toObservable()
             .flatMap { auth ->
                 storeAccessToken(auth.getAccessToken())
                 Observable.just(auth)
@@ -127,29 +132,24 @@ class MainActivity : AppCompatActivity() {
         userProfileMvcView.setFollowersCount(userInfo.data.counts.followedBy)
         userProfileMvcView.setFollowingCount(userInfo.data.counts.follows)
         userProfileMvcView.setFirstName(userInfo.data.fullName)
-        for (i in 0 until userProfile.data.size) {
-            userProfileMvcView.setPostedImage(userProfile.data[i].images.thumbnail.url, i)
-        }
 
         val userProfileView = userProfileMvcView.getRootView()
         val toolbar: Toolbar = userProfileView.findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         setContentView(userProfileView)
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_sign_out -> {
-                Toast.makeText(this, "Sign out", Toast.LENGTH_LONG).show()
-            }
+        for (i in 0 until userProfile.data.size) {
+            userProfileMvcView.setPostedImage(userProfile.data[i].images.thumbnail.url, i)
         }
-        return true
+    }
+
+    private fun signOut() {
+        getPreferences(MODE_PRIVATE).edit {
+            remove("access_token")
+            apply()
+        }
+        setContentView(loginMvcView.getRootView())
     }
 
 }
