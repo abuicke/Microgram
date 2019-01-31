@@ -115,6 +115,10 @@ class MainActivity : AppCompatActivity() {
         userProfileMvcView.setPostsCount(userInfo.data.counts.media)
         userProfileMvcView.setFollowersCount(userInfo.data.counts.followedBy)
         userProfileMvcView.setFollowingCount(userInfo.data.counts.follows)
+        userProfileMvcView.setFirstName(userInfo.data.fullName)
+        for (i in 0 until userProfile.data.size) {
+            userProfileMvcView.setPostedImage(userProfile.data[i].images.thumbnail.url, i)
+        }
         setContentView(userProfileMvcView.getRootView())
     }
 

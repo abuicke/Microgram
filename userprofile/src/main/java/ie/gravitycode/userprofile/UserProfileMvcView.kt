@@ -13,4 +13,8 @@ interface UserProfileMvcView : MvcView {
     fun setFollowersCount(followersCount: Long)
 
     fun setFollowingCount(followingCount: Long)
+
+    fun setFirstName(firstName: String)
+
+    fun setPostedImage(uri: String, index: Int)
 }

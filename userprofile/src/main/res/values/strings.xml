@@ -3,4 +3,7 @@
     <string name="posts_stat_label">Posts</string>
     <string name="followers_stat_label">Followers</string>
     <string name="following_stat_label">Following</string>
+    <string name="left_image_content_description">Left Image</string>
+    <string name="centre_image_content_description">Centre Image</string>
+    <string name="right_image_content_description">Right Image</string>
 </resources>

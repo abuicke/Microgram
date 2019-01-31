@@ -10,7 +10,7 @@ import butterknife.ButterKnife
 import ie.gravitycode.core.util.ImageLoader
 
 class UserProfileMvcViewImpl(
-    inflater: LayoutInflater,
+    private val inflater: LayoutInflater,
     private val imageLoader: ImageLoader,
     parent: ViewGroup?
 ) : UserProfileMvcView {
@@ -21,6 +21,8 @@ class UserProfileMvcViewImpl(
     @BindView(R2.id.posts_stat) internal lateinit var postsStatView: TextView
     @BindView(R2.id.followers_stat) internal lateinit var followersStatView: TextView
     @BindView(R2.id.following_stat) internal lateinit var followingStatView: TextView
+    @BindView(R2.id.first_name) internal lateinit var firstNameView: TextView
+    @BindView(R2.id.posted_images_container) internal lateinit var postedImagesContainerView: ViewGroup
 
     init {
         ButterKnife.bind(this, rootView)
@@ -46,5 +48,35 @@ class UserProfileMvcViewImpl(
 
     override fun setFollowingCount(followingCount: Long) {
         followingStatView.text = followingCount.toString()
+    }
+
+    override fun setFirstName(firstName: String) {
+        firstNameView.text = firstName
+    }
+
+    override fun setPostedImage(uri: String, index: Int) {
+        if (index >= postedImagesContainerView.childCount * 3) {
+            inflater.inflate(R.layout.images_row, postedImagesContainerView, true)
+        }
+
+        val row = index / 3
+        val position = index % 3
+
+        val rowViewGroup: ViewGroup = postedImagesContainerView.getChildAt(row) as ViewGroup
+        val imageView = rowViewGroup.findViewById<ImageView>(
+            when (position) {
+                0 -> R.id.left_image
+                1 -> R.id.centre_image
+                2 -> R.id.right_image
+                else -> {
+                    if (BuildConfig.DEBUG) {
+                        throw IllegalStateException("unexpected row position $position")
+                    }
+                    R.id.left_image
+                }
+            }
+        )
+
+        imageLoader.load(uri, imageView)
     }
 }
