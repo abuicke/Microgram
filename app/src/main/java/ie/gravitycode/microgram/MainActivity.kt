@@ -16,7 +16,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     private companion object {
-        val TAG = MainActivity::class.java.simpleName
+        val TAG: String = MainActivity::class.java.simpleName
     }
 
     private val activityComponent = DaggerActivityComponent
@@ -27,14 +27,14 @@ class MainActivity : AppCompatActivity() {
     @Inject internal lateinit var instagramApi: InstagramApi
     @Inject internal lateinit var mvcViewFactory: MvcViewFactory
 
+    private val loginMvcView by lazy { mvcViewFactory.getLoginMvcView(null) }
+    private val instagramOAuthMvcView by lazy { mvcViewFactory.getInstagramOAuthMvcView(null) }
+    private val userProfileMvcView by lazy { mvcViewFactory.getUserProfileMvcView(null) }
+
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityComponent.inject(this)
-
-        val loginMvcView = mvcViewFactory.getLoginMvcView(null)
-        val instagramOAuthMvcView = mvcViewFactory.getInstagramOAuthMvcView(null)
-        val userProfileMvcView = mvcViewFactory.getUserProfileMvcView(null)
 
         loginMvcView.subscribeLoginClicked()
             .switchMap {
@@ -42,9 +42,7 @@ class MainActivity : AppCompatActivity() {
                 instagramOAuthMvcView.startSignIn()
             }
             .observeOn(Schedulers.io())
-            .switchMap { authentication ->
-                instagramApi.getUserInfo(authentication.getAccessToken())
-            }
+            .switchMap { auth -> instagramApi.getUserInfo(auth.getAccessToken()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : DisposableObserver<UserInfo>() {
                 override fun onComplete() {
