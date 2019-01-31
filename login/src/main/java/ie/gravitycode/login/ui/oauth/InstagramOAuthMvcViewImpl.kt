@@ -27,6 +27,7 @@ class InstagramOAuthMvcViewImpl(inflater: LayoutInflater, parent: ViewGroup?) :
 
     init {
         ButterKnife.bind(this, rootView)
+        webView.isVerticalScrollBarEnabled = true
         webView.settings.javaScriptEnabled = true
         webView.settings.loadWithOverviewMode = true
         webView.settings.useWideViewPort = true
