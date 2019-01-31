@@ -10,7 +10,6 @@ import ie.gravitycode.login.util.Authentication
 import ie.gravitycode.microgram.dependencyinjection.DaggerActivityComponent
 import ie.gravitycode.microgram.dependencyinjection.MvcViewModule
 import io.reactivex.Maybe
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
@@ -38,18 +37,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         activityComponent.inject(this)
 
-        val storedAuthSource = getStoredAccessToken()
+        getStoredAccessToken()
             .toObservable()
-
-        val userLoginAuthSource =
-            loginMvcView.subscribeLoginClicked()
+            .concatWith(loginMvcView.subscribeLoginClicked()
                 .observeOn(AndroidSchedulers.mainThread())
                 .switchMap {
                     setContentView(instagramOAuthMvcView.getRootView())
                     instagramOAuthMvcView.startSignIn()
-                }
-
-        Observable.concat(storedAuthSource, userLoginAuthSource)
+                })
             .observeOn(Schedulers.io())
             .firstElement()
             .flatMapObservable { auth ->
@@ -64,8 +59,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onNext(userInfo: UserInfo) {
-                    userProfileMvcView.setUsername(userInfo.data.username)
-                    setContentView(userProfileMvcView.getRootView())
+                    showUserProfile(userInfo)
                     dispose()
                 }
 
@@ -96,6 +90,11 @@ class MainActivity : AppCompatActivity() {
                 override fun getAccessToken() = accessToken
             })
         }
+    }
+
+    private fun showUserProfile(userInfo: UserInfo) {
+        userProfileMvcView.setUsername(userInfo.data.username)
+        setContentView(userProfileMvcView.getRootView())
     }
 
 }
