@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Microgram</string>
+    <string name="toolbar_sign_out">Sign out</string>
 </resources>

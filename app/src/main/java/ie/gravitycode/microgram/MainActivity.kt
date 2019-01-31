@@ -2,7 +2,11 @@ package ie.gravitycode.microgram
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.edit
 import ie.gravitycode.instagram.api.InstagramApi
 import ie.gravitycode.instagram.reponse.userinfo.UserInfo
@@ -18,6 +22,7 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -125,7 +130,26 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until userProfile.data.size) {
             userProfileMvcView.setPostedImage(userProfile.data[i].images.thumbnail.url, i)
         }
-        setContentView(userProfileMvcView.getRootView())
+
+        val userProfileView = userProfileMvcView.getRootView()
+        val toolbar: Toolbar = userProfileView.findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        setContentView(userProfileView)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_sign_out -> {
+                Toast.makeText(this, "Sign out", Toast.LENGTH_LONG).show()
+            }
+        }
+        return true
     }
 
 }
