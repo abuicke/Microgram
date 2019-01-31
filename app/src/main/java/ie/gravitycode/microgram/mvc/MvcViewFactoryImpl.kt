@@ -1,7 +1,8 @@
-package ie.gravitycode.microgram
+package ie.gravitycode.microgram.mvc
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import ie.gravitycode.core.util.ImageLoader
 import ie.gravitycode.core.util.ToastManager
 import ie.gravitycode.login.ui.LoginMvcViewImpl
 import ie.gravitycode.login.ui.oauth.InstagramOAuthMvcViewImpl
@@ -9,6 +10,7 @@ import ie.gravitycode.userprofile.UserProfileMvcViewImpl
 
 class MvcViewFactoryImpl(
     private val inflater: LayoutInflater,
+    private val imageLoader: ImageLoader,
     private val toastManager: ToastManager
 ) : MvcViewFactory {
 
@@ -19,6 +21,6 @@ class MvcViewFactoryImpl(
         InstagramOAuthMvcViewImpl(inflater, parent)
 
     override fun getUserProfileMvcView(parent: ViewGroup?) =
-        UserProfileMvcViewImpl(inflater, parent)
+        UserProfileMvcViewImpl(inflater, imageLoader, parent)
 
 }

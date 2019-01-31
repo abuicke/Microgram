@@ -1,4 +1,4 @@
-package ie.gravitycode.microgram
+package ie.gravitycode.microgram.mvc
 
 import android.view.ViewGroup
 import ie.gravitycode.login.ui.LoginMvcView

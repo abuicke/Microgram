@@ -2,10 +2,13 @@
   <dictionary name="buick">
     <words>
       <w>adminsdk</w>
+      <w>allerta</w>
       <w>edittext</w>
       <w>gravitycode</w>
+      <w>jayjaybuick</w>
       <w>microgram</w>
       <w>sharedpref</w>
+      <w>userprofile</w>
     </words>
   </dictionary>
 </component>
