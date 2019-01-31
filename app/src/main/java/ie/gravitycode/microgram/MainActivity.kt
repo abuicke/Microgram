@@ -94,8 +94,6 @@ class MainActivity : AppCompatActivity() {
                     instagramOAuthMvcView.startSignIn()
                 })
             .observeOn(Schedulers.io())
-//            .firstElement()
-//            .toObservable()
             .flatMap { auth ->
                 storeAccessToken(auth.getAccessToken())
                 Observable.just(auth)
