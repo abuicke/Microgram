@@ -68,11 +68,13 @@ class MainActivity : AppCompatActivity() {
                     dispose()
                 }
             })
-
-        setContentView(loginMvcView.getRootView())
     }
 
     private fun authenticate(): Observable<Authentication> {
+        if (!hasStoredAccessToken()) {
+            setContentView(loginMvcView.getRootView())
+        }
+
         return getStoredAccessToken()
             .toObservable()
             .concatWith(loginMvcView.subscribeLoginClicked()
@@ -89,6 +91,10 @@ class MainActivity : AppCompatActivity() {
                 Observable.just(auth)
             }
     }
+
+    private fun hasStoredAccessToken() =
+        getPreferences(MODE_PRIVATE)
+            .contains("access_token")
 
     private fun storeAccessToken(accessToken: String) {
         getPreferences(MODE_PRIVATE).edit {
